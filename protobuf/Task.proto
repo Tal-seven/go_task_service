@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option go_package = "cmd/Task";
+
+import "google/protobuf/timestamp.proto";
+
+message TaskRequest { string TaskName = 1; }
+
+message Task {
+  int32 TaskId = 1;
+  repeated TaskRequest request = 2;
+}
+
+message TaskMetrics {
+  google.protobuf.Timestamp TimeRemaining = 1;
+  float DistanceRemaining = 2;
+  float AverageTaskVelocity = 3;
+  float AverageBatteryConsumed = 4;
+}
+
+message TaskResponse {
+  enum Response {
+    RECEIVED = 0;
+    PUBLISHED = 1;
+    IDLE = 2;
+    ACTIVE = 3;
+    FAILED = 4;
+    CANCELLED = 5;
+  }
+
+  int32 TaskId = 1;
+  Response Status = 2;
+  string ErrorMessage = 3;
+  TaskMetrics Metrics = 4;
+}
+
+service TaskService {
+  rpc ExecuteTask(Task) returns (TaskResponse) {}
+}
